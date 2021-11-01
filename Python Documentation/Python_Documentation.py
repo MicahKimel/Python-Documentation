@@ -51,6 +51,8 @@ Df.columns = FieldMapping["Column Names"]
 #Select columns
 Df = Df[Df.columns.intersection(FieldMapping["Column Name"])]
 #insert list of columns
+for i in FieldMappingColumns['Column Name']:
+    Df[i] = ""
 
 
 #group by and add to df
