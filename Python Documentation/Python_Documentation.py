@@ -45,6 +45,7 @@ Df.columns = FieldMapping["Column Names"]
 Df = Df[Df.columns.intersection(FieldMapping["Column Name"])]
 #insert list of columns
 
-
+#group by
+Df = Df.groupby(['Name']).size().reset_index(name='GroupCount')
 
 
