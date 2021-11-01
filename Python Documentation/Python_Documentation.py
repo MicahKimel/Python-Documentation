@@ -7,6 +7,8 @@ import sys
 import pyodbc 
 import sqlalchemy
 import urllib
+import threading, socket, sys, time
+from queue import Queue
 
 #read csv or xlsx
 Df = pd.read_excel('test.xlsx')
@@ -36,6 +38,10 @@ Df.to_sql("table_name", engine)
 
 #mutate column get row number
 Df["LineSequence"] = np.arange(len(BalanceBatchConversion))
+#remove leading and trailing whitespace
+Df["Name"] = strip(Df["Name"])
+#tostring
+Df["id"] = str(Df["id"]) #also float() int() bool()
 
 #Distinct on column
 Df = Df.drop_duplicates(subset=['Name'])
@@ -80,3 +86,31 @@ r = request.get(url, headers = headers, auth=('', ''))
 jsonData = json.loads(r.content)
 df = pd.json_normalize(jsonData["data"])
 
+#multi thread port scanner
+print_lock = threading.Lock()
+if len(sys.argv) !=2 :
+    print ("Usage: portscan.py <host>")
+    sys.exit(1)
+host = sys.argv[1]
+def scan(port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        con = s.connect((host, port))
+        with print_lock:
+            print('Port: ' + str(port) + ' is open')
+        con.close()
+    except:
+        pass
+def threader():
+    while True:
+        worker = q.get()
+        scan(worker)
+        q.task_done()
+q = Queue()
+for x in range(100):
+    t = threading.Thread(target=threader)
+    t.daemon = True
+    t.start()
+for worker in range(1, 1024):
+    q.put(worker)
+x = q.join()
