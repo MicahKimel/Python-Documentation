@@ -51,13 +51,24 @@ Df.columns = FieldMapping["Column Names"]
 #Select columns
 Df = Df[Df.columns.intersection(FieldMapping["Column Name"])]
 #insert list of columns
-for i in FieldMappingColumns['Column Name']:
-    Df[i] = ""
-
+Df[[FieldMappingColumns['Column Name']]] = ""
+#insert only new columns from list
+Df[[list(set(FieldMappingColumns['Column Name']) - set(Df.columns.values))]] = ""
 
 #group by and add to df
 Df['Size'] = Df.groupby(['Name'])['Name'].transform('size')
 
+#pivot wider | spread | long to wide
+Df.pivot_table(index=["Name"], #list of columns to keep 
+                    columns='EmailType', #column names
+                    values='Email', #new column values
+                    margins=True,  # add margins
+                    aggfunc='sum').reset_index()  # sum margins (rows/columns) defaulted to mean
+
+#pivot longer | gather | wide to long
+Df.melt(id_vars=['Name'], #columns to keep
+        value_vars=['Email'], #columns to make longer
+        var_name ='ChangedVarname', value_name ='ChangedValname') #new column names from column expansion
 
 #api req
 headers = {
