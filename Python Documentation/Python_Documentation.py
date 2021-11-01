@@ -5,6 +5,8 @@ import json
 import os
 import sys
 import pyodbc 
+import sqlalchemy
+import urllib
 
 #read csv or xlsx
 Df = pd.read_excel('test.xlsx')
@@ -27,6 +29,11 @@ Df = pd.read_sql("Declare @Today date " +
 "where MCALYR = @ThisYear " +	
 "ORDER BY MCALYR DESC", con)
 
+#insert df into table
+quoted = urllib.parse.quote_plus("DRIVER={SQL Server Native Client 11.0};SERVER=SERVER;DATABASE=database")
+engine = create_engine('mssql+pyodbc:///?odbc_connect={}'.format(quoted))
+Df.to_sql("table_name", engine)
+
 #mutate column get row number
 Df["LineSequence"] = np.arange(len(BalanceBatchConversion))
 
@@ -45,7 +52,18 @@ Df.columns = FieldMapping["Column Names"]
 Df = Df[Df.columns.intersection(FieldMapping["Column Name"])]
 #insert list of columns
 
-#group by
-Df = Df.groupby(['Name']).size().reset_index(name='GroupCount')
 
+#group by and add to df
+Df['Size'] = Df.groupby(['Name'])['Name'].transform('size')
+
+
+#api req
+headers = {
+"Header1" : "header1",
+"Header2" : "header2"
+}
+url = "https://www.api.com"
+r = request.get(url, headers = headers, auth=('', ''))
+jsonData = json.loads(r.content)
+df = pd.json_normalize(jsonData["data"])
 
