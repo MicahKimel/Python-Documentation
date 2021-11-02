@@ -42,6 +42,13 @@ Df["LineSequence"] = np.arange(len(BalanceBatchConversion))
 Df["Name"] = strip(Df["Name"])
 #tostring
 Df["id"] = str(Df["id"]) #also float() int() bool()
+#filter rows based on condition 
+Df = Df.loc[Df['Percentage'] > 70] 
+#filter in list
+Df = Df[Df['Column'].isin(alist)] 
+# selecting rows based on condition 
+Df = Df[(Df['Age'] == 22) & 
+          Df['Stream'].isin(alist)] 
 
 #Distinct on column
 Df = Df.drop_duplicates(subset=['Name'])
