@@ -150,3 +150,17 @@ def send_mail(to_email, subject, message, server='smtp.example.cn',
 
 send_mail(to_email=['12345@qq.com', '12345@126.com'],
           subject='hello', message='Your analysis has done!')
+
+#plot charts
+import matplotlib.pyplot as plt
+
+data = {'apple': 10, 'orange': 15, 'lemon': 5, 'lime': 20}
+names = list(data.keys())
+values = list(data.values())
+
+fig, axs = plt.subplots(1, 3, figsize=(9, 3), sharey=True)
+axs[0].bar(names, values)
+axs[1].scatter(names, values)
+axs[2].plot(names, values)
+fig.suptitle('Categorical Plotting')
+plt.show()
