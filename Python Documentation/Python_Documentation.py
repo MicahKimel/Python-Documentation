@@ -14,6 +14,10 @@ from queue import Queue
 Df = pd.read_excel('test.xlsx')
 Df = pd.read_csv('test.csv')
 
+#write csv or xlsx
+Df.to_csv('test.csv')
+Df.to_excel('test.xlsx')
+
 #Get drivers
 pyodbc.drivers()
 
@@ -43,7 +47,7 @@ Df["Name"] = strip(Df["Name"])
 #tostring
 Df["id"] = str(Df["id"]) #also float() int() bool()
 #filter rows based on condition 
-Df = Df.loc[Df['Percentage'] > 70] 
+Df = Df.loc[Df['id'] > 70] 
 #filter in list
 Df = Df[Df['Column'].isin(alist)] 
 # selecting rows based on condition 
@@ -67,6 +71,8 @@ Df = Df[Df.columns.intersection(FieldMapping["Column Name"])]
 Df[[FieldMappingColumns['Column Name']]] = ""
 #insert only new columns from list
 Df[[list(set(FieldMappingColumns['Column Name']) - set(Df.columns.values))]] = ""
+#drop columns
+Df = Df.drop(columns=["column"])
 
 #group by and add to df
 Df['Size'] = Df.groupby(['Name'])['Name'].transform('size')
@@ -121,3 +127,26 @@ for x in range(100):
 for worker in range(1, 1024):
     q.put(worker)
 x = q.join()
+
+#send emails
+import smtplib
+from email.message import EmailMessage
+def send_mail(to_email, subject, message, server='smtp.example.cn',
+              from_email='xx@example.com'):
+    # import smtplib
+    msg = EmailMessage()
+    msg['Subject'] = subject
+    msg['From'] = from_email
+    msg['To'] = ', '.join(to_email)
+    msg.set_content(message)
+    print(msg)
+    server = smtplib.SMTP(server)
+    server.set_debuglevel(1)
+    server.login(from_email, 'password')  # user & password
+    server.send_message(msg)
+    server.quit()
+    print('successfully sent the mail.')
+
+
+send_mail(to_email=['12345@qq.com', '12345@126.com'],
+          subject='hello', message='Your analysis has done!')
