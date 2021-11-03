@@ -91,7 +91,7 @@ Df.melt(id_vars=['Name'], #columns to keep
 
 #api req
 headers = {
-"Header1" : "header1",
+"Auth" : "bearer header1",
 "Header2" : "header2"
 }
 url = "https://www.api.com"
